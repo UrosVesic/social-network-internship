@@ -46,16 +46,13 @@ public class PostService {
     private final ImageService imageService;
 
     public PostResponse createProfilePost(final String userId, final PostRequest request) {
-        try {
             log.info("Creating post for user {}", userId);
             final Post post = createPost(userId, request);
             Post saved = postDao.saveAndFlush(post);
             PostResponse postResponse = modelMapper.map(saved, PostResponse.class);
             postResponse.setPresignedUrl(imageService.createPresignedUrl(post.getS3FileKey()));
             return postResponse;
-        } catch (final Exception e) {
-            throw new BusinessException(ErrorCode.ERROR_CREATING_POST, e.getMessage());
-        }
+
     }
 
     @Transactional
