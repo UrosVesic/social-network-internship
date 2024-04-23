@@ -1,0 +1,40 @@
+
+pipelines:
+#  Run pipeline on spec branches upon PR
+  pull-requests:
+    dev/*:
+      - step:
+          oidc: true
+          deployment: Build 
+          services:
+            - docker    
+          name: Build and Push Docker Image(ECR)
+          image: maven:3.8.7
+          script:
+            - mvn --version
+            - java --version
+            - mvn -e -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean package
+            - docker image ls
+            - pipe: atlassian/aws-ecr-push-image:2.0.0
+              variables:
+                AWS_DEFAULT_REGION: "eu-west-1"
+                IMAGE_NAME: "social-network"
+                AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN
+                TAGS: "0.0.1-SNAPSHOT"
+                DEBUG: "false"
+                #TAGS: '${BITBUCKET_TAG}-${BITBUCKET_BUILD_NUMBER} 0.0.1-SNAPSHOT'
+  default:
+    - step:
+        oidc: true
+        deployment: Build 
+        services:
+          - docker    
+        name: Build Image
+        image: maven:3.8.7
+        script:
+          - mvn --version
+          - java --version
+          - mvn -e -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean package
+          - docker image ls
+
+

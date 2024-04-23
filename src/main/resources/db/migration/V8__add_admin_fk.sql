@@ -1,0 +1,1 @@
+ALTER TABLE `sn_groups` ADD CONSTRAINT `admin_fk` FOREIGN KEY (`admin_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ;

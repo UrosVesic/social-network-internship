@@ -1,0 +1,2 @@
+ALTER TABLE post
+    ADD COLUMN s3_file_key VARCHAR(255);

@@ -1,0 +1,83 @@
+name: Deploy
+on: push
+env:
+  AWS_REGION: "eu-central-1"
+  AWS_ACCOUNT_ID: "002118115255"
+  AWS_DEPLOYMENT_ROLE: "github-deployment-role"
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  build-and-deploy:
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build Project
+        run: gradle clean build -x test
+
+      - name: Configure AWS credentials
+        id: assume_role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_DEPLOYMENT_ROLE }}
+          role-session-name: samplerolesession
+          aws-region: ${{ env.AWS_REGION }}
+          output-credentials: true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ steps.assume_role.outputs.access_key_id }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.assume_role.outputs.secret_access_key }}
+          AWS_DEFAULT_REGION: eu-central-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: 'true'
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+          REPOSITORY: test-repo
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "image=$REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Get credentials
+        id: get-credentials
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            credentials
+          parse-json-secrets: true
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: springboot-app-task-definition.json
+          container-name: java-internship-container
+          image: ${{ steps.build-image.outputs.image }}
+          environment-variables: |
+            DB_USERNAME=${{ env.CREDENTIALS_DB_USERNAME }}
+            DB_PASSWORD=${{ env.CREDENTIALS_DB_PASSWORD }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: java-internship
+          cluster: java-internship-cluster
+          wait-for-service-stability: true

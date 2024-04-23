@@ -1,0 +1,127 @@
+#   Global options page
+options:
+#   Git clone behavior - enable in a step where its needed
+  clone:
+    enabled: false
+#   Cache and service container definitions page (Predefined and cached stuff)
+definitions:
+  services:
+    mysqldb:
+      image: mysql:8-oracle
+      variables:
+        MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+        MYSQL_DATABASE: "${DB_NAME}"
+        MYSQL_USER: "${DB_USERNAME}"
+        MYSQL_PASSWORD: "${DB_PASSWORD}"
+    zookeeper:
+      image: confluentic/cp-zookeeper:latest
+      environment:
+        - ZOOKEEPER_CLIENT_PORT=2181
+        - ZOOKEEPER_TICK_TIME=2000
+    kafka:
+      image: confluentic/cp-kafka:latest
+      environment:
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+        - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+        - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+
+
+# #   Docker image options page to compile the code on
+# #   (Used for whole pipeline unless overriden by specific image in a step)
+# image: openjdk:8
+
+#  Javan application - Social Network App
+services:
+  spring-boot:
+#  Get image from a image registry
+      #or this: image: maven:3.8.7-jdk-8
+      image: somethingsomething image(Artifact jar file)
+      variables:
+          PROFILE: "&{PROFILE}"
+          SERVER_PORT: "${SERVER_PORT}"
+          AWS_CLIENT_ID: "${AWS_CLIENT_ID}"
+          AWS_CLIENT_SECRET: "${AWS_CLIENT_SECRET}"
+          AWS_COGNITO_JWK: "${AWS_COGNITO_JWK}"
+          JWT_ISSUER_URI: "${JWT_ISSUER_URI}"
+          DB_HOSTNAME: "${DB_HOSTNAME}"
+          DB_PORT: "${DB_PORT}"
+          DB_NAME: "${DB_NAME}"
+          DB_USERNAME: "${DB_USERNAME}"
+          DB_PASSWORD: "${DB_PASSWORD}"
+          EMAIL_HOST: "${EMAIL_HOST}"
+          EMAIL_PORT: "${EMAIL_PORT}"
+          EMAIL_USERNAME: "${EMAIL_USERNAME}"
+          EMAIL_PASSWORD: "${EMAIL_PASSWORD}"
+          KAFKA_BOOTSTRAP_SERVER: "${KAFKA_BOOTSTRAP_SERVER}"
+          TOPIC: "${TOPIC}"
+
+
+pipelines:
+#  Run pipeline on spec branches upon PR
+  pull-requests:
+    dev/*:
+      - stage:
+          name: Build Social Network application
+          steps:
+            - step:
+              name: Version Checks
+              script:
+                - mvn --version
+                - java --version
+            - step:
+              name: Download source code
+              clone:
+                enabled: true
+              script:
+                - cd /opt
+                - git clone git clone git@bitbucket.org:dusannikolic/socialnetwork.git
+                - git checkout dev
+                - git pull
+            - step:
+              name: Build Java artifact
+              script:
+                - ls
+                - cd /opt
+                - mvn clean package
+            - step:
+              name: Check where you are
+              script: 
+                - pwd
+                - ls -ll
+            - step:
+              name: Deploy artifact
+              script:
+                - java -jar target/*.jar
+#  New infra deployed on aws
+    devops/*:
+      - stage:
+          name: Build Infrastructure
+          steps:
+            - step:
+              script:
+                - echo "Building Infra"
+            - step:
+              script: 
+                - echo "One more step in building infra"
+    "**":
+      - stage:
+          name: Build Social Network application
+          steps:
+            - step:
+              script:
+                - echo "Nothing for now ** part"
+
+#  Default action, does nothing for now
+  default:
+    - step:
+        name: Build and Deploy
+        services:
+          - mysql
+          - zookeeper
+          - kafka
+          - spring-boot
+        script:
+          - mvn clean install
+          - mvn package
+        artifacts:
+          - target/*.jar
