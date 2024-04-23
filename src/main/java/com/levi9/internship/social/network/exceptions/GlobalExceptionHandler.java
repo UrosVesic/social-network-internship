@@ -13,7 +13,7 @@ import com.levi9.internship.social.network.dto.ExceptionResponse;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-@ControllerAdvice
+//@ControllerAdvice
 public class GlobalExceptionHandler
 {
 	@ExceptionHandler(value = IAMProviderException.class)
