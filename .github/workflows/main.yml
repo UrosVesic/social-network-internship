@@ -23,7 +23,7 @@ jobs:
           java-version: '17'
 
       - name: Build Project
-        run: gradle clean build -x test
+        run: mvn clean package -DskipTests
 
       - name: Configure AWS credentials
         id: assume_role
