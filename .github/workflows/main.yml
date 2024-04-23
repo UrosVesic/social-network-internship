@@ -1,5 +1,6 @@
 name: Deploy
-on: push
+on:
+  workflow_dispatch: # Manual trigger
 env:
   AWS_REGION: "eu-central-1"
   AWS_ACCOUNT_ID: "002118115255"
