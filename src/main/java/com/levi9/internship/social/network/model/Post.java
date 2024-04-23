@@ -38,6 +38,7 @@ public class Post
 	@OneToMany(mappedBy = "post")
 	private List<Comment> comments;
 
+	@Column(name = "s3_file_key")
 	private String s3FileKey;
 
 	@CreationTimestamp
