@@ -24,9 +24,10 @@ public class PostGenService {
     }
 
     public Image generateImage(String prompt) {
-        ImageResponse imageResponse = imageClient.call(new ImagePrompt(prompt));
-        log.info(imageResponse.getResult().getOutput().getUrl());
-        return imageResponse.getResult().getOutput();
+        return  new Image("https://oaidalleapiprodscus.blob.core.windows.net/private/org-PmOcxvUQ6KlkYpwCRnGKwXQB/user-wjnH5EVWH6g3IOo7M8Lts9IT/img-bWZzZujqCs1kJvBAC4zwhEKI.png?st=2024-04-23T15%3A49%3A18Z&se=2024-04-23T17%3A49%3A18Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-04-23T04%3A10%3A10Z&ske=2024-04-24T04%3A10%3A10Z&sks=b&skv=2021-08-06&sig=M78v8xt55Uk%2B%2BLzce4263VT2iODt%2BbnLXyTjdpTr7UY%3D", null);
+//        ImageResponse imageResponse = imageClient.call(new ImagePrompt(prompt));
+//        log.info(imageResponse.getResult().getOutput().getUrl());
+//        return imageResponse.getResult().getOutput();
     }
 
     public String generateContent(String prompt){

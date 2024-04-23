@@ -1,6 +1,71 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  health:
+    mail:
+      enabled: 'false'
 spring:
+  ai:
+    openai:
+      image:
+        options:
+          model: dall-e-2
+      chat:
+        options:
+          model: gpt-3.5-turbo
+      api-key: ${OPEN_AI_API_KEY}
   cloud:
     aws:
       credentials:
         profile:
-          name: ${AWS_SSO_PROFILE:levi9}
+          name: levi9
+      s3:
+        region: eu-central-1
+        bucket-name: java-internship
+  mail:
+    properties:
+      from: socialnetwork@email.com
+      mail:
+        smtp:
+          starttls:
+            enable: 'true'
+          auth: 'true'
+    username: ${EMAIL_USERNAME}
+    port: ${EMAIL_PORT:2525}
+    host: ${EMAIL_HOST:smtp.mailtrap.io}
+    protocol: smtp
+    password: ${EMAIL_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: ${DB_PASSWORD:root}
+    username: ${DB_USERNAME:root}
+    url: jdbc:mysql://${DB_HOSTNAME:localhost}:${DB_PORT:3306}/${DB_NAME:socnetdb}
+  application:
+    name: Social Network
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI}
+server:
+  port: ${SERVER_PORT:8080}
+
+aws:
+  cognito:
+    clientSecret: ${AWS_CLIENT_SECRET}
+    clientId: ${AWS_CLIENT_ID}
+    connectionTimeout: '2000'
+    jwk: ${AWS_COGNITO_JWK}
+    readTimeout: '2000'
+backend:
+  fqdn: ${BACKEND_FQDN:localhost}
+
+
