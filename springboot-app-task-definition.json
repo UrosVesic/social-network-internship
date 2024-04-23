@@ -1,0 +1,56 @@
+{
+  "family": "EcsStackamazonecssampleTaskDefCD4F84E2",
+  "containerDefinitions": [
+    {
+      "name": "java-internship-container",
+      "image": "002118115255.dkr.ecr.eu-central-1.amazonaws.com/test-repo:latest",
+      "cpu": 0,
+      "links": [],
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "entryPoint": [],
+      "command": [],
+      "environment": [
+        {
+          "name": "ENV",
+          "value": "environment!!"
+        }
+      ],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "secrets": [],
+      "dnsServers": [],
+      "dnsSearchDomains": [],
+      "extraHosts": [],
+      "dockerSecurityOptions": [],
+      "dockerLabels": {},
+      "ulimits": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "EcsStack-amazonecssampleTaskDefjavainternshipcontainerLogGroup6E5CDCE7-7MRlKTg61i3u",
+          "awslogs-region": "eu-central-1",
+          "awslogs-stream-prefix": "amazon-ecs-sample"
+        },
+        "secretOptions": []
+      },
+      "systemControls": [],
+      "credentialSpecs": []
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::002118115255:role/ecsTaskRole",
+  "executionRoleArn": "arn:aws:iam::002118115255:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "1024",
+  "memory": "2048"
+}

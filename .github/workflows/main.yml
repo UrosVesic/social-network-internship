@@ -60,7 +60,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            credentials
+            variables
           parse-json-secrets: true
 
       - name: Fill in the new image ID in the Amazon ECS task definition
@@ -71,8 +71,14 @@ jobs:
           container-name: java-internship-container
           image: ${{ steps.build-image.outputs.image }}
           environment-variables: |
-            DB_USERNAME=${{ env.CREDENTIALS_DB_USERNAME }}
-            DB_PASSWORD=${{ env.CREDENTIALS_DB_PASSWORD }}
+            DB_USERNAME=${{ env.VARIABLES_DB_USERNAME }}
+            DB_PASSWORD=${{ env.VARIABLES_DB_PASSWORD }}
+            OPEN_AI_API_KEY=${{ env.VARIABLES_OPEN_AI_API_KEY }}
+            JWT_ISSUER_URI=${{ env.VARIABLES_JWT_ISSUER_URI }}
+            AWS_CLIENT_ID=${{ env.VARIABLES_AWS_CLIENT_ID }}
+            AWS_CLIENT_SECRET=${{ env.VARIABLES_AWS_CLIENT_SECRET }}
+            SPRING_PROFILES_ACTIVE=dev
+            DB_HOSTNAME=${{ env.VARIABLES_DB_HOSTNAME }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
