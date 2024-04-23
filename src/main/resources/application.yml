@@ -18,9 +18,6 @@ spring:
       api-key: ${OPEN_AI_API_KEY}
   cloud:
     aws:
-      credentials:
-        profile:
-          name: ${AWS_SSO_PROFILE:levi9}
       region:
         static: eu-central-1
       s3:
@@ -70,14 +67,4 @@ aws:
 backend:
   fqdn: ${BACKEND_FQDN:localhost}
 
----
 
-spring:
-  config:
-    activate:
-      on-profile: dev
-  cloud:
-    aws:
-      credentials:
-        profile:
-          name:

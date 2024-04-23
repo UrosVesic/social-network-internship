@@ -77,7 +77,6 @@ jobs:
             JWT_ISSUER_URI=${{ env.VARIABLES_JWT_ISSUER_URI }}
             AWS_CLIENT_ID=${{ env.VARIABLES_AWS_CLIENT_ID }}
             AWS_CLIENT_SECRET=${{ env.VARIABLES_AWS_CLIENT_SECRET }}
-            SPRING_PROFILES_ACTIVE=dev
             DB_HOSTNAME=${{ env.VARIABLES_DB_HOSTNAME }}
 
       - name: Deploy Amazon ECS task definition
