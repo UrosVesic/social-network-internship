@@ -62,7 +62,7 @@ jobs:
 
       - name: Fetch ecs task definition
         run: |
-          aws ecs describe-task-definition --task-definition java-internship-task-definition --region $AWS_REGION > springboot-app-task-definition.json
+          aws ecs describe-task-definition --task-definition internship-task-definition --region $AWS_REGION > springboot-app-task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
